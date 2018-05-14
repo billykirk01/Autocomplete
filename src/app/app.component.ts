@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ import { MatSnackBar } from '@angular/material';
 
 export class AppComponent {
 
-  constructor(public snackBar: MatSnackBar) { }
+  constructor(public snackBar: MatSnackBar, private http: HttpClient) { }
 
   myControl: FormControl = new FormControl();
 
@@ -40,20 +41,18 @@ export class AppComponent {
     var filteredList = this.sortedOptions.filter(option =>
       option[0].toLowerCase().indexOf(interestWord.toLowerCase()) === 0);
 
+    console.log(filteredList)
+
     if (val.substring(val.length - 1, val.length) == " ") {
       return [];
     }
     else {
       return filteredList
     }
+
   }
 
   trainModel() {
-
-    if (this.textAreaText != "") {
-      this.openSnackBar("Model trained")
-    }
-
     this.options = this.textAreaText
       .replace(/[^a-zA-Z '-]/g, "")
       .toLowerCase()
@@ -80,26 +79,55 @@ export class AppComponent {
     this.sortedOptions = items;
 
     this.refreshList();
+
+    this.textAreaText = ""
+
+    this.openSnackBar("Model trained with user's text")
   }
+
+  useWordList() {
+    this.http.get('assets/wordlist.json').subscribe(data => {
+      var wordList = data as string[];
+
+      this.textAreaText = ""
+
+      var wordCounts = {}
+
+      for (let word of wordList) {
+        wordCounts[word] = 1;
+      }
+
+      this.sortedOptions = Object.keys(wordCounts).map(function (key) {
+        return [key, wordCounts[key]];
+      });
+
+      this.refreshList();
+
+      this.openSnackBar("Model trained with word list")
+
+    })
+
+  }
+
 
   selected(selection: String) {
     var array = this.inputText.split(" ")
     var matchText = array.pop()
     if (array.length == 0) {
       if (/^[A-Z]/.test(matchText)) {
-        return selection.charAt(0).toUpperCase() + selection.slice(1);
+        return selection.charAt(0).toUpperCase() + selection.slice(1) + " ";
       }
       else {
-        return selection
+        return selection + " "
       }
     }
     else {
       if (/^[A-Z]/.test(matchText)) {
         console.log("this the culprit" + matchText)
-        return array.join(" ") + " " + selection.charAt(0).toUpperCase() + selection.slice(1);
+        return array.join(" ") + " " + selection.charAt(0).toUpperCase() + selection.slice(1) + " ";
       }
       else {
-        return array.join(" ") + " " + selection
+        return array.join(" ") + " " + selection + " "
       }
 
     }
@@ -107,7 +135,7 @@ export class AppComponent {
 
   openSnackBar(message: string) {
     this.snackBar.open(message, "", {
-      duration: 1000,
+      duration: 2200,
     });
   }
 

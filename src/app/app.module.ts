@@ -20,6 +20,8 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { HttpClientModule } from '@angular/common/http';
+
 
 
 @NgModule({
@@ -29,6 +31,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatAutocompleteModule,
     FormsModule,

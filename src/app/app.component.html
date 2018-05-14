@@ -8,12 +8,14 @@
 
   <div>
     <mat-form-field class="example-full-width">
-      <textarea matInput matTextareaAutosize matAutosizeMinRows="1" placeholder="Training text" [(ngModel)]="textAreaText" [ngModelOptions]="{standalone: true}"></textarea>
+      <textarea matInput matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5" placeholder="Training text" [(ngModel)]="textAreaText" [ngModelOptions]="{standalone: true}"></textarea>
     </mat-form-field>
   </div>
 
   <div class="button-div">
-    <button mat-raised-button color="accent" (click)="trainModel()">Train Model</button>
+    <button mat-raised-button [disabled]="textAreaText==''" color="accent" (click)="trainModel()">Train Model</button>
+    <span style="width: 1em;"></span>
+    <button mat-raised-button color="primary" (click)="useWordList()">Use Word List</button>
   </div>
 
   <p class="instructions-font">
